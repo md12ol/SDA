@@ -28,16 +28,16 @@ public:
     vector<int> rtnOutput(bool printToo, ostream &outStream);
 
 private:
-    int create();       // Randomly initialize the SDA by setting initChar and filling the transitions and response vectors
+    int create(); // Randomly initialize the SDA by setting initChar and filling the transitions and response vectors
 
-    int initChar{};     // The initial character to drive the first transition
-    int numStates{};    // The number of states in the SDA
-    int initState{};    // The initial state for the SDA
-    int curState{};     // The current state of the SDA
-    int numChars{};     // The number of characters in the SDA's alphabet
-    int maxRespLen{};   // The maximum length of the response vector
-    int outputLen{};    // The length of the response vector expected from the SDA
-    bool verbose{};     // Should information be displayed to console?
+    int initChar{}; // The initial character to drive the first transition
+    int numStates{}; // The number of states in the SDA
+    int initState{}; // The initial state for the SDA
+    int curState{}; // The current state of the SDA
+    int numChars{}; // The number of characters in the SDA's alphabet
+    int maxRespLen{}; // The maximum length of the response vector
+    int outputLen{}; // The length of the response vector expected from the SDA
+    bool verbose{}; // Should information be displayed to console?
 
     /**
      * The transition vectors for each state.  For example transitions[3][1] = 5 means the SDA will transition from

@@ -1,15 +1,15 @@
 #include "SDA.h"
 
 /**
- * Constructor for the SDA object that takes in the various parameters.  SDAs are
- * finite state machines where each transition appends characters to a buffer.  Buffers dictate
+ * Constructor for the SDA object that takes in the various parameters. SDAs are
+ * finite state machines where each transition appends characters to a buffer. Buffers dictate
  * which transitions to transit through the machine and determine the output characters.
  * The SDA generated will have numStates states with numChars transitions emanating from each state.
- * Each transition will be composed of up to maxRespLen characters.  Each character will
- * be an integer between 0 and numChars-1, inclusively.  Thus, the output will be a vector
- * of integers which can be translated as needed to your preferred alphabet.  The output
- * generated will be outputLen number of characters.  The SDA will start at the state with
- * index initState and proceed using a random character determined in create().  If
+ * Each transition will be composed of up to maxRespLen characters. Each character will
+ * be an integer between 0 and numChars-1, inclusively. Thus, the output will be a vector
+ * of integers which can be translated as needed to your preferred alphabet. The output
+ * generated will be outputLen number of characters. The SDA will start at the state with
+ * index initState and proceed using a random character determined in create(). If
  * verbose is true feedback will be printed to console.
  *
  * @param numStates The number of states in the SDA.
@@ -19,7 +19,8 @@
  * @param initState The initial state of the SDA (default value is 0).
  * @param verbose Whether you want text feedback from the SDA (default value is false).
  */
-SDA::SDA(const int numStates, const int numChars, const int maxRespLen, const int outputLen, const int initState, const bool verbose) {
+SDA::SDA(const int numStates, const int numChars, const int maxRespLen, const int outputLen, const int initState,
+         const bool verbose) {
     initChar = -1;
     this->numStates = numStates;
     this->initState = initState;
@@ -49,7 +50,8 @@ SDA::SDA(const int numStates, const int numChars, const int maxRespLen, const in
  * Namely, an SDA with 10 states, a two-character alphabet, responses with up to two characters,
  * and 1000 characters in the output.
  */
-SDA::SDA() : SDA(10, 2, 2, 1000) {}
+SDA::SDA() : SDA(10, 2, 2, 1000) {
+}
 
 /**
  * A copy constructor.
@@ -72,7 +74,8 @@ SDA::~SDA() = default;
  * @return -1 if there is an error
  */
 int SDA::create() {
-    initChar = static_cast<int>(lrand48()) % numChars; // Randomize the initial character that drives the first transition.
+    // Randomize the initial character that drives the first transition.
+    initChar = static_cast<int>(lrand48()) % numChars;
 
     // Transitions
     vector<int> oneState;
@@ -88,7 +91,7 @@ int SDA::create() {
     // Responses
     vector<int> oneResponse;
     oneResponse.reserve(maxRespLen);
-    vector<vector<int>> oneStateResponses;
+    vector<vector<int> > oneStateResponses;
     oneStateResponses.reserve(numChars);
     for (int state = 0; state < numStates; ++state) {
         oneStateResponses.clear();
@@ -106,7 +109,7 @@ int SDA::create() {
     return 0;
 }
 
-vector<vector<vector<int>>> SDA::getResponses(){
+vector<vector<vector<int> > > SDA::getResponses() {
     return this->responses;
 }
 
@@ -296,33 +299,35 @@ int SDA::mutate(const int numMutations) {
     vector<int> oneResponse;
 
     for (int mut = 0; mut < numMutations; ++mut) {
-        if (drand48() < 0.04) { // 4% chance of mutating initial character
+        // 4% chance of mutating initial character
+        if (drand48() < 0.04) {
             initChar = static_cast<int>(lrand48()) % numChars;
             if (verbose) {
                 cout << "Completed mutation on the SDA's initial character." << endl;
             }
             return 0;
-        } else {
-            const int mutPt = static_cast<int>(lrand48()) % numStates;
-            const int transNum = static_cast<int>(lrand48()) % numChars;
+        }
+        const int mutPt = static_cast<int>(lrand48()) % numStates;
+        const int transNum = static_cast<int>(lrand48()) % numChars;
 
-            if (static_cast<int>(lrand48()) % 2 == 0) { // Mutate transition (48%)
-                transitions.at(mutPt).at(transNum) = static_cast<int>(lrand48()) % numStates;
-                if (verbose) {
-                    cout << "Completed mutation for state " << mutPt << ": ";
-                    cout << "New transition for character " << transNum << "." << endl;
-                }
-            } else { // Mutate response (48%)
-                oneResponse.clear();
-                const int respSize = static_cast<int>(lrand48()) % maxRespLen + 1;
-                for (int i = 0; i < respSize; ++i) {
-                    oneResponse.push_back(static_cast<int>(lrand48()) % numChars);
-                }
-                responses.at(mutPt).at(transNum) = oneResponse;
-                if (verbose) {
-                    cout << "Completed mutation for state " << mutPt << ": ";
-                    cout << "New response for character " << transNum << "." << endl;
-                }
+        // Mutate transition (48%)
+        if (static_cast<int>(lrand48()) % 2 == 0) {
+            transitions.at(mutPt).at(transNum) = static_cast<int>(lrand48()) % numStates;
+            if (verbose) {
+                cout << "Completed mutation for state " << mutPt << ": ";
+                cout << "New transition for character " << transNum << "." << endl;
+            }
+        } else {
+            // Mutate response (48%)
+            oneResponse.clear();
+            const int respSize = static_cast<int>(lrand48()) % maxRespLen + 1;
+            for (int i = 0; i < respSize; ++i) {
+                oneResponse.push_back(static_cast<int>(lrand48()) % numChars);
+            }
+            responses.at(mutPt).at(transNum) = oneResponse;
+            if (verbose) {
+                cout << "Completed mutation for state " << mutPt << ": ";
+                cout << "New response for character " << transNum << "." << endl;
             }
         }
     }
